@@ -78,11 +78,18 @@ class EquipmentMoveController extends Controller
         logger($equipmentMove);
         if ($equipmentMove->mov_status === '2'){
             $equipmentMoveFix = EquipmentMove::where('id', $id)->where('mov_status', '2')->first();
-            $equipment = Equipment::where('ei_seq', $id)->first();
+            $ei_seq = $equipmentMoveFix->ei_seq;
+            $equipment = Equipment::where('ei_seq', $ei_seq)->first();
+
+            //equipment_info update
             $equipment->user_no = $equipmentMoveFix->res_user_no;
             $equipment->re_user_no = $equipmentMoveFix->req_user_no;
-            $equipment->remark_1 = $equipmentMoveFix->req_comment;
+            $equipment->remark1 = $equipmentMoveFix->req_comment;
             $equipment->save();
+
+            //equipment_log insert
+
+
             logger($equipment);
             return response()->json(['재고이동'=>$equipmentMove, 'mesaage'=>'자산이동이 처리 되었습니다',]);
         }
