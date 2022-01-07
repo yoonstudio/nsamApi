@@ -40,9 +40,9 @@ class UserInfoController extends Controller
     public function show($id)
     {
         // $userInfo = UserInfo::where('user_no', $id)->with('equipments')->get();
-        $userInfo = UserInfo::where('user_no', $id)->get();
-        if($userInfo === null){
-            return response()->json(['message' => '등록된 사번이 없습니다.'], 200, [], JSON_UNESCAPED_UNICODE);
+        $userInfo = UserInfo::where('dept_code', $id)->where('is_status', 'COM0000001')->get();
+        if($userInfo == null){
+            return response()->json(['message' => '등록된 구성원이 없습니다.'], 200, [], JSON_UNESCAPED_UNICODE);
             }
         // return response()->json($userInfo, 200, [], JSON_UNESCAPED_UNICODE);
         return UserInfoResource::collection($userInfo);
