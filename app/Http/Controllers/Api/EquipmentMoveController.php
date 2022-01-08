@@ -83,7 +83,7 @@ class EquipmentMoveController extends Controller
             $equipmentMoveFix = EquipmentMove::where('id', $id)->where('mov_status', '2')->first();
             $equipment = Equipment::where('ei_seq', $equipmentMoveFix->ei_seq)->first();
             $equipmentLog = new EquipmentLog();
-
+            //equipment_info 정보 갱신
             $equipment->user_no = $equipmentMoveFix->res_user_no;
             $equipment->re_user_no = $equipmentMoveFix->req_user_no;
             $equipment->mngt_user_no = $equipmentMoveFix->res_user_no;
@@ -91,7 +91,7 @@ class EquipmentMoveController extends Controller
             $equipment->out_dt = $equipmentMoveFix->res_dt;
             $equipment->update_dt = Carbon::now();
             $equipment->save();
-
+            //equipment_log 이력 추가
             $equipmentLog->ei_seq = $equipmentMoveFix->ei_seq;
             $equipmentLog->user_no = $equipmentMoveFix->res_user_no;
             $equipmentLog->as_mngr_nm = $equipmentMoveFix->res_user_no;
