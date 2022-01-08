@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Equipment;
 use App\Models\EquipmentMove;
+use App\Models\EquipmentLog;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\EquipmentMove as EquipmentMoveResource;
+use Carbon\Carbon;
 
 class EquipmentMoveController extends Controller
 {
@@ -65,7 +67,7 @@ class EquipmentMoveController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id, ) //자산이동 승인(param: id, res사번, res_dt, res_comment, mov_ststus)
+    public function update(Request $request, $id) //자산이동 승인(param: id, res사번, res_dt, res_comment, mov_ststus)
     {
         $equipmentMove = EquipmentMove::where('id', $id)->where('mov_status', '1')->first();
         if($equipmentMove === null){
@@ -76,14 +78,30 @@ class EquipmentMoveController extends Controller
         $equipmentMove->mov_status = $request->input('mov_status'); //1: 신청, 2:승인, 3:반려
         $equipmentMove->save();
         logger($equipmentMove);
+
         if ($equipmentMove->mov_status === '2'){
             $equipmentMoveFix = EquipmentMove::where('id', $id)->where('mov_status', '2')->first();
-            $equipment = Equipment::where('ei_seq', $id)->first();
+            $equipment = Equipment::where('ei_seq', $equipmentMoveFix->ei_seq)->first();
+            $equipmentLog = new EquipmentLog();
+
             $equipment->user_no = $equipmentMoveFix->res_user_no;
             $equipment->re_user_no = $equipmentMoveFix->req_user_no;
-            $equipment->remark_1 = $equipmentMoveFix->req_comment;
+            $equipment->mngt_user_no = $equipmentMoveFix->res_user_no;
+            $equipment->remark1 = $equipmentMoveFix->req_comment;
+            $equipment->out_dt = $equipmentMoveFix->res_dt;
+            $equipment->update_dt = Carbon::now();
             $equipment->save();
+
+            $equipmentLog->ei_seq = $equipmentMoveFix->ei_seq;
+            $equipmentLog->user_no = $equipmentMoveFix->res_user_no;
+            $equipmentLog->as_mngr_nm = $equipmentMoveFix->res_user_no;
+            $equipmentLog->remark1 = $equipmentMoveFix->req_comment;
+            $equipmentLog->out_dt = $equipmentMoveFix->res_dt;
+            $equipmentLog->reg_dt = Carbon::now();
+            $equipmentLog->save();
+
             logger($equipment);
+
             return response()->json(['재고이동'=>$equipmentMove, 'mesaage'=>'자산이동이 처리 되었습니다',]);
         }
         elseif($equipmentMove->mov_status  === '3'){
