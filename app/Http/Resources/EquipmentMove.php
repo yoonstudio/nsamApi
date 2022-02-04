@@ -24,7 +24,7 @@ class EquipmentMove extends JsonResource
             '요청자'=>$this->req_user_no,
             '요청일'=>$this->req_dt,
             '상태'=>$this->mov_status,
-            '적요'=>$this->req_comment,
+            '요청사유'=>$this->req_comment,
         ];
     }
 }

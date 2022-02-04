@@ -19,10 +19,6 @@ Route::get('/', 'WelcomeController@index');
 
 Route::get('test', 'WelcomeController@test');
 
-Route::post('test', function(Request $request){
-    var_dump($request->all());
-});
-
 Route::get('auth/login', function () {
     $credentials = [
         'email' => 'yoonstudio@sk.com',
@@ -57,36 +53,6 @@ Route::get('auth/logout', function(){
     return '또 와요~';
 });
 
-Route::resource('articles', 'ArticlesController');
-
 Route::get('ex', function () {
     return view('extend');
-});
-
-
-Route::pattern('say', '[0-9a-zA-Z]{3}');
-Route::get('hello/{say?}', function ($say = 'hello') {
-    return view('hello', [
-        'name' => 'Jone',
-        'say' => $say
-    ]);
-});
-
-
-Route::get('home', [
-    'as' => 'home2',
-    function () {
-        return '라라벨 홈페이지';
-    }
-]);
-
-Route::get('home2', function () {
-    return redirect(route('home'));
-});
-
-
-Route::get('fruit', function () {
-    $items = ['apple', 'banana', 'tomato'];
-    return view('fruit', ['items' => $items]);
-
 });
