@@ -3,6 +3,8 @@
 use Faker\Core\Barcode;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\PopupController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,43 +17,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', 'WelcomeController@index');
+Route::get('/', [WelcomeController::class, 'hello']); //초기화면
 
-Route::get('test', 'WelcomeController@test');
+Route::post('/', [WelcomeController::class, 'login']); //로그인
 
-Route::get('auth/login', function () {
-    $credentials = [
-        'email' => 'yoonstudio@sk.com',
-        'password' => 'skns123$'
-    ];
+Route::post('popup', [PopupController::class, 'eqmtpopup']);
 
-    if(! auth()->attempt($credentials)){
-        return '로그인 정보가 없습니다.';
-    }
-
-    return redirect('protected');
-});
-
-Route::get('protected', function () {
-    dump(session()->all());
-    if(! auth()->check()){
-        return '누구쇼?';
-    }
-return '반갑습니다. ' .auth()->user()->first_name;
-});
-
-// Route::get('protected', [
-//     'middleware'=>'auth', function () {
-//         dump(session()->all());
-//         return '반갑습니다. ' .auth()->user()->first_name;
-//     }
-// ]);
-
-Route::get('auth/logout', function(){
-    auth()->logout();
-
-    return '또 와요~';
-});
+Route::get('index', 'WelcomeController@index');
 
 Route::get('ex', function () {
     return view('extend');
